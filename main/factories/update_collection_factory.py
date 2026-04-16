@@ -58,7 +58,7 @@ def __build_jira_update_query_addition(manifest):
     # Subtract a short overlap window to avoid missing updates around clock drift.
     watermark = __calculate_exact_update_time(manifest) - timedelta(minutes=5)
     watermark_jql = watermark.strftime("%Y/%m/%d %H:%M")
-    return f'AND updated >= "{watermark_jql}"'
+    return f'updated >= "{watermark_jql}"'
 
 def __create_reader_and_converter(manifest):
     if manifest['reader']['type'] == 'jira':
@@ -98,8 +98,13 @@ def __create_jira_reader_and_converter(manifest):
 
     query_addition = __build_jira_update_query_addition(manifest)
 
+    query = f"{manifest['reader']['query']}"
+    if query != "":
+        query += " AND "
+    query += f"{query_addition}"
+
     reader = JiraDocumentReader(base_url=manifest['reader']['baseUrl'], 
-                                    query=f"{manifest['reader']['query']} {query_addition}",
+                                    query=query,
                                     token=token,
                                     login=login, 
                                     password=password, 
@@ -116,8 +121,13 @@ def __create_jira_cloud_reader_and_converter(manifest):
 
     query_addition = __build_jira_update_query_addition(manifest)
 
+    query = f"{manifest['reader']['query']}"
+    if query != "":
+        query += " AND "
+    query += f"{query_addition}"
+
     reader = JiraCloudDocumentReader(base_url=manifest['reader']['baseUrl'], 
-                                    query=f"{manifest['reader']['query']} {query_addition}",
+                                    query=query,
                                     email=email,
                                     api_token=api_token, 
                                     batch_size=manifest['reader']['batchSize'])
