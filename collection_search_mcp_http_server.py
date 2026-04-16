@@ -145,7 +145,7 @@ def search_in_collection(
     )
     
     # Debug: Log actual call being made
-    logging.debug("DEBUG: Calling searcher.search(text_query=%r, max_number_of_chunks=%d, ...)", query, maxNumberOfChunks)
+    logging.debug("DEBUG: Calling searcher.search(text_query=%r, max_number_of_chunks=%d, ...)", text_query, maxNumberOfChunks)
 
     search_results = searcher.search(
         text_query,
