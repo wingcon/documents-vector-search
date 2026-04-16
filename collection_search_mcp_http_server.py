@@ -5,6 +5,7 @@ import sys
 from typing import List, Optional, Annotated
 from pydantic import Field
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 from main.factories.fetch_collection_factory import create_collection_fetcher
 from main.factories.search_collection_factory import create_collection_searcher
@@ -60,7 +61,10 @@ def create_collection_fetcher_wrapper(collection_name: str):
         raise ValueError(f"Failed to create fetcher for collection '{collection_name}': {str(e)}")
 
 # Create MCP server with HTTP transport
-mcp = FastMCP("documents-search-all-collections")
+mcp = FastMCP("documents-search-all-collections",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=False,
+    ))
 
 # Debug and configure settings for host validation
 if hasattr(mcp, 'settings'):
