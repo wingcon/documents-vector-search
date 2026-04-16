@@ -108,26 +108,26 @@ Supports hybrid search (vector + keyword), multi-index fusion (RRF), filtering (
 def search_in_collection(
     collection_name: Annotated[str, Field(description="Name of the collection to search in (e.g., \"confluence\").")],
     query: Annotated[str, Field(description="The search query text (natural language or keywords).")],
-    indexes: Annotated[Optional[str], Field(description="Comma-separated index names (e.g., \"default,metadata\") to search in. If omitted, all indexes are used.")] = None,
     filter: Annotated[Optional[str], Field(description="Optional filter expression (e.g., 'space = \"DEV\"') to narrow results.")] = None,
     rrfK: Annotated[int, Field(description="Reciprocal Rank Fusion constant for multi-index results fusion (default: 60).", ge=0)] = 60,
     maxNumberOfChunks: Annotated[int, Field(description="Maximum number of text chunks returned (default: 50).", ge=1)] = 50,
     maxNumberOfDocuments: Annotated[Optional[int], Field(description="Maximum number of *unique* documents returned (optional; overrides chunk-based limit).", ge=1)] = None,
     includeFullText: Annotated[bool, Field(description="If True, returns full content of matched documents (overrides chunk-level excerpts).")] = False,
-    format: Annotated[str, Field(description="Output format — one of 'json', 'json_with_indent', or 'toon' (human-readable summary).", pattern="^(json|json_with_indent|toon)$")] = "toon"
+    format: Annotated[str, Field(description="Output format — one of 'json', 'json_with_indent', or 'toon' (human-readable summary).", pattern="^(json|json_with_indent|toon)$")] = "toon",
+    indexes: Annotated[Optional[str], Field(description="Comma-separated index names (e.g., \"indexer_FAISS_IndexFlatL2__embeddings_all-MiniLM-L6-v2,indexer_SqlLiteBM25\"). Index names must match those defined in the collection's manifest.json file. Available index types include: indexer_FAISS_IndexFlatL2__, indexer_ChromaDb__, or indexer_SqlLiteBM25__, each followed by an embedding model identifier (e.g., embeddings_all-MiniLM-L6-v2, embeddings_bge-m3, embeddings_all-mpnet-base-v2, embeddings_multi-qa-distilbert-cos-v1). **Only use this parameter if the user explicitly requests to search in specific indexes!** If omitted, all indexes defined for the collection will be used for hybrid search.")] = None,
 ) -> str:
     """Search in a specific collection by vector search.
     
     Args:
         collection_name: Name of the collection to search in (e.g., "confluence").
         query: The search query text (natural language or keywords).
-        indexes: Comma-separated index names (e.g., "default,metadata") to search in. If omitted, all indexes are used.
         filter: Optional filter expression (e.g., 'space = "DEV"') to narrow results.
         rrfK: Reciprocal Rank Fusion constant for multi-index results fusion (default: 60).
         maxNumberOfChunks: Maximum number of text chunks returned (default: 50).
         maxNumberOfDocuments: Maximum number of *unique* documents returned (optional; overrides chunk-based limit).
         includeFullText: If True, returns full content of matched documents (overrides chunk-level excerpts).
         format: Output format — one of 'json', 'json_with_indent', or 'toon' (human-readable summary).
+        indexes: Comma-separated index names (e.g., "indexer_FAISS_IndexFlatL2__embeddings_all-MiniLM-L6-v2,indexer_SqlLiteBM25") to search in. Index names must match those defined in the collection's manifest.json file. Available index types include: indexer_FAISS_IndexFlatL2__, indexer_ChromaDb__, or indexer_SqlLiteBM25__, each followed by an embedding model identifier (e.g., embeddings_all-MiniLM-L6-v2, embeddings_bge-m3, embeddings_all-mpnet-base-v2, embeddings_multi-qa-distilbert-cos-v1). **Only use this parameter if the user explicitly requests to search in specific indexes!** If omitted, all indexes defined for the collection will be used for hybrid search.
 
     Returns:
         str: Formatted search results with relevance-ranked chunks/documents and metadata (including URLs).
