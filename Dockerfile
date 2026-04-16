@@ -1,9 +1,20 @@
 # Use Python 3.13 slim image for smaller size
 FROM python:3.13-slim
 
-# Install required system dependencies including git
+# Install required system dependencies git
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install required dependencies for document reads
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libxcb1 \
+    pandoc \
+    libgl1 \
+    libglib2.0-0t64 \
+    tesseract-ocr tesseract-ocr-eng tesseract-ocr-deu \
+    poppler-utils \
+    libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create data directory for storing collections and cache
