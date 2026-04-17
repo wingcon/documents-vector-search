@@ -212,6 +212,5 @@ if __name__ == "__main__":
     logging.debug("\nConfiguring app to allow connections from any host...")
     
     # Run with uvicorn directly with the desired host and port
-    logging.info(f"\nServer will be accessible at http://localhost:{args['port']}/mcp")
     logging.info(f"Server will be accessible at http://<your-ip>:{args['port']}/mcp")
     uvicorn.run(app, host=args['host'], port=args['port'], log_level="info", proxy_headers=True, forwarded_allow_ips="*")
